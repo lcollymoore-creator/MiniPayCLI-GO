@@ -1,4 +1,4 @@
-MiniPay — Payment Processor
+MiniPay — Payment Processor CLI
 
 
 Features

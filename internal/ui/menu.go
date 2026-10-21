@@ -3,41 +3,94 @@ package ui
 import (
 	"fmt"
 
+	"github.com/AlecAivazis/survey/v2"
 	payment "github.com/lcollymoore-creator/MiniPayCLI-GO/internal/service"
 )
 
+type Transaction struct {
+	Method string
+	Amount float64
+}
+
 func Menu() {
-menu:
+	options := []string{
+		"Payment with Card",
+		"Payment with Debit Card",
+		"Payment with PayPal",
+		"Transaction History",
+		"Exit",
+	}
+
+	var history []Transaction
+
 	for {
-		var option int
+		var selected string
 
-		fmt.Println("\n1. Payment with Card")
-		fmt.Println("2. Payment with Debit Card")
-		fmt.Println("3. Payment with PayPal")
-		fmt.Println("4. Exit")
-		fmt.Print("Select option: ")
+		prompt := &survey.Select{
+			Message: "Select an option:",
+			Options: options,
+		}
 
-		n, err := fmt.Scanln(&option)
-
+		err := survey.AskOne(prompt, &selected)
 		if err != nil {
-			fmt.Println("Error reading option:", err)
+			fmt.Println("Error selecting option:", err)
+			return
+		}
+
+		if selected == "Exit" {
+			fmt.Println("Exiting...")
+			return
+		}
+
+		// Show transaction history
+		if selected == "Transaction History" {
+			fmt.Println("\n--- Transaction History ---")
+
+			if len(history) == 0 {
+				fmt.Println("No transactions yet.")
+			} else {
+				for i, t := range history {
+					fmt.Printf("%d. %s: $%.2f\n",
+						i+1, t.Method, t.Amount)
+				}
+			}
+
 			continue
 		}
 
-		fmt.Printf("Option entered: %d (values read: %d)\n", option, n)
+		// Read payment amount
+		var money float64
 
-		switch option {
-		case 1:
-			payment.PaymentWithCreditCard(20)
-		case 2:
-			payment.PaymentWithDebitCard(10)
-		case 3:
-			payment.PaymentWithPayPal(14)
-		case 4:
-			fmt.Println("Exiting...")
-			break menu
-		default:
-			fmt.Println("Invalid option. Try again.")
+		fmt.Print("Enter the amount: ")
+		_, err = fmt.Scanln(&money)
+		if err != nil || money <= 0 {
+			fmt.Println("Invalid amount.")
+			continue
+		}
+
+		// Process payment and save transaction
+		switch selected {
+		case "Payment with Card":
+			payment.PaymentWithCreditCard(money)
+			history = append(history, Transaction{
+				Method: "Credit Card",
+				Amount: money,
+			})
+
+		case "Payment with Debit Card":
+			payment.PaymentWithDebitCard(money)
+			history = append(history, Transaction{
+				Method: "Debit Card",
+				Amount: money,
+			})
+
+		case "Payment with PayPal":
+			payment.PaymentWithPayPal(money)
+			history = append(history, Transaction{
+				Method: "PayPal",
+				Amount: money,
+			})
+
 		}
 	}
 }

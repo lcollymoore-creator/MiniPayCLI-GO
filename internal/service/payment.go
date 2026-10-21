@@ -10,7 +10,9 @@ var DebitCardBalance float64 = 5000
 var PaypalBalance float64 = 1000
 
 func PaymentWithCreditCard(money float64) error {
-	fmt.Println("Account Balance", CreditCardBalance)
+
+	fmt.Println("Account Credit Balance", CreditCardBalance)
+	fmt.Print("Enter payment amount: ")
 	if money <= CreditCardBalance {
 		fmt.Println("Payment with Credit Card successful", money)
 
@@ -33,7 +35,8 @@ func PaymentWithCreditCard(money float64) error {
 }
 
 func PaymentWithDebitCard(money float64) error {
-	fmt.Println("Account Balance", DebitCardBalance)
+	fmt.Println("Account Debit Balance", DebitCardBalance)
+	fmt.Print("Enter payment amount: ")
 	if money <= DebitCardBalance {
 		fmt.Println("Payment with Credit Card successful", money)
 
@@ -56,7 +59,7 @@ func PaymentWithDebitCard(money float64) error {
 }
 
 func PaymentWithPayPal(money float64) error {
-	fmt.Println("Account Balance", PaypalBalance)
+	fmt.Println("Account Paypal Balance", PaypalBalance)
 	if money <= PaypalBalance {
 		fmt.Println("Payment with Credit Card successful", money)
 
